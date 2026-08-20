@@ -1,0 +1,330 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "shiwork/moonsh"
+
+import {
+  "moonbitlang/core/argparse",
+}
+
+// Values
+pub fn char_in_set(Char, CharSet) -> Bool
+
+pub fn char_to_lower(Char) -> Char
+
+pub fn char_to_upper(Char) -> Char
+
+pub fn charset_size(CharSet) -> Int
+
+pub fn colorize(String, Color) -> String
+
+pub fn colorize_multi(String, Array[Color]) -> String
+
+pub fn count_diff(DiffResult) -> (Int, Int, Int)
+
+pub fn count_text(String) -> WcResult
+
+pub fn cut_line(String, CutMode) -> String
+
+pub fn cut_lines(Array[String], CutMode) -> Array[String]
+
+pub fn detect_file_type(String) -> FileType
+
+pub fn diff_lines(Array[String], Array[String]) -> DiffResult
+
+pub fn diff_summary(DiffResult) -> String
+
+pub fn diff_text(String, String) -> DiffResult
+
+pub fn file_type_color(FileType) -> Color
+
+pub fn file_type_icon(FileType) -> String
+
+pub fn format_diff(DiffResult) -> String
+
+pub fn format_diff_colored(DiffResult) -> String
+
+pub fn format_permissions(Int) -> String
+
+pub fn format_size(Int64) -> String
+
+pub fn format_size_int(Int) -> String
+
+pub fn format_timestamp(Int64) -> String
+
+pub fn get_basename(String) -> String
+
+pub fn get_basename_from_path(String) -> String
+
+pub fn get_dirname(String) -> String
+
+pub fn get_extension(String) -> String
+
+pub fn get_flag(Map[String, Bool], String) -> Bool
+
+pub fn get_option(Map[String, Array[String]], String) -> String
+
+pub fn get_positional(Map[String, Array[String]], String, String) -> String
+
+pub fn get_positional_list(Map[String, Array[String]], String) -> Array[String]
+
+pub fn glob_match(String, String) -> Bool
+
+pub fn is_absolute_path(String) -> Bool
+
+pub fn is_alnum(Char) -> Bool
+
+pub fn is_alpha(Char) -> Bool
+
+pub fn is_digit(Char) -> Bool
+
+pub fn is_path_inside(String, String) -> Bool
+
+pub fn is_relative_path(String) -> Bool
+
+pub fn is_space(Char) -> Bool
+
+pub fn is_word_char(Char) -> Bool
+
+pub fn join_path_multi(Array[String]) -> String
+
+pub fn join_paths(String, String) -> String
+
+pub fn line_level_diff(Array[String], Array[String]) -> Array[(DiffOp, Int, Int)]
+
+pub let moonsh_description : String
+
+pub let moonsh_version : String
+
+pub fn normalize_path(String) -> String
+
+pub fn normalize_separators(String) -> String
+
+pub fn pad_left(String, Int) -> String
+
+pub fn pad_right(String, Int) -> String
+
+pub fn parent_dir(String) -> String
+
+pub fn parse_charset(String) -> CharSet
+
+pub fn parse_int_safe(String, Int) -> Int
+
+pub fn parse_positions(String) -> Array[(Int, Int)]
+
+pub fn path_ancestors(String) -> Array[String]
+
+pub fn path_depth(String) -> Int
+
+pub fn path_extension(String) -> String
+
+pub fn path_filename(String) -> String
+
+pub fn path_has_prefix(String, String) -> Bool
+
+pub fn path_has_suffix(String, String) -> Bool
+
+pub let path_sep : String
+
+pub let path_sep_win : String
+
+pub fn path_type(String) -> PathType
+
+pub fn regex_find(String, String) -> Array[Int]
+
+pub fn regex_find_flags(String, String, RegexFlags) -> Array[Int]
+
+pub fn regex_match(String, String) -> Bool
+
+pub fn relative_path(String, String) -> String
+
+pub fn remove_extension(String) -> String
+
+pub fn repeat_char(Char, Int) -> String
+
+pub fn repeat_str(String, Int) -> String
+
+pub fn replace_extension(String, String) -> String
+
+pub async fn run_cat(@argparse.Matches) -> Unit
+
+pub async fn run_cut(@argparse.Matches) -> Unit
+
+pub async fn run_diff(@argparse.Matches) -> Unit
+
+pub async fn run_find(@argparse.Matches) -> Unit
+
+pub async fn run_grep(@argparse.Matches) -> Unit
+
+pub async fn run_head(@argparse.Matches) -> Unit
+
+pub async fn run_ls(@argparse.Matches) -> Unit
+
+pub async fn run_sort(@argparse.Matches) -> Unit
+
+pub async fn run_stat(@argparse.Matches) -> Unit
+
+pub async fn run_tail(@argparse.Matches) -> Unit
+
+pub async fn run_tr(@argparse.Matches) -> Unit
+
+pub async fn run_uniq(@argparse.Matches) -> Unit
+
+pub async fn run_wc(@argparse.Matches) -> Unit
+
+pub fn sort_lines(Array[String], SortOptions) -> Array[String]
+
+pub fn split_lines(String) -> Array[String]
+
+pub fn split_path_segments(String) -> Array[String]
+
+pub fn strip_trailing_sep(String) -> String
+
+pub fn supported_commands() -> Array[String]
+
+pub fn text_equal(String, String) -> Bool
+
+pub fn tr_translate(String, CharSet, CharSet, TrOptions) -> String
+
+pub fn uniq_lines(Array[String], UniqOptions) -> Array[String]
+
+// Errors
+
+// Types and methods
+pub struct CharSet {
+  chars : Array[Char]
+  ranges : Array[(Char, Char)]
+}
+
+pub enum Color {
+  Reset
+  Bold
+  Dim
+  Italic
+  Underline
+  Red
+  Green
+  Yellow
+  Blue
+  Magenta
+  Cyan
+  White
+  BrightBlack
+  BrightRed
+  BrightGreen
+  BrightYellow
+  BrightBlue
+  BrightMagenta
+  BrightCyan
+  BrightWhite
+}
+pub fn Color::to_ansi(Self) -> String
+
+pub enum CutMode {
+  Field(String, Array[(Int, Int)])
+  CharPositions(Array[(Int, Int)])
+  BytePositions(Array[(Int, Int)])
+}
+
+pub struct DiffLine {
+  op : DiffOp
+  old_line_no : Int
+  new_line_no : Int
+  content : String
+  new_content : String
+}
+
+pub enum DiffOp {
+  Equal
+  OnlyOld
+  OnlyNew
+  Changed
+}
+
+pub struct DiffResult {
+  lines : Array[DiffLine]
+  added : Int
+  deleted : Int
+  changed : Int
+}
+
+pub enum FileType {
+  Regular
+  Directory
+  Symlink
+  Executable
+  Archive
+  Image
+  Code
+  Doc
+  Audio
+  Video
+  Other
+}
+
+pub enum PathType {
+  Absolute
+  Relative
+  HomeRelative
+  DotRelative
+  Empty
+}
+
+pub struct RegexFlags {
+  ignore_case : Bool
+  multiline : Bool
+}
+pub fn RegexFlags::default() -> Self
+
+pub enum SortMode {
+  Lexical
+  Numeric
+  Natural
+  MonthName
+  Version
+}
+
+pub struct SortOptions {
+  mode : SortMode
+  reverse : Bool
+  unique : Bool
+  ignore_case : Bool
+  ignore_blanks : Bool
+  key_field : Int?
+  field_separator : String
+}
+pub fn SortOptions::default() -> Self
+
+pub struct TermConfig {
+  color_enabled : Bool
+  width : Int
+}
+pub fn TermConfig::default() -> Self
+
+pub struct TrOptions {
+  delete : Bool
+  squeeze : Bool
+  complement : Bool
+  truncate : Bool
+}
+pub fn TrOptions::default() -> Self
+
+pub struct UniqOptions {
+  only_duplicate : Bool
+  only_unique : Bool
+  count : Bool
+  ignore_case : Bool
+  skip_fields : Int
+  skip_chars : Int
+}
+pub fn UniqOptions::default() -> Self
+
+pub struct WcResult {
+  lines : Int
+  words : Int
+  chars : Int
+  bytes : Int
+  max_line_length : Int
+}
+
+// Type aliases
+
+// Traits

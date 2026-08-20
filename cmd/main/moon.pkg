@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/stdio",
+  "moonbitlang/async/io",
+  "moonbitlang/core/argparse",
+  "shiwork/moonsh",
+}
+
+supported_targets = "+native"
+
+pkgtype(kind: "executable")

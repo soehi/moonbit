@@ -1,0 +1,7 @@
+import {
+  "moonbitlang/async/fs",
+  "moonbitlang/async/stdio",
+  "moonbitlang/async/io",
+  "moonbitlang/core/argparse",
+  "moonbitlang/core/string",
+}
