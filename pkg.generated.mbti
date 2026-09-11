@@ -216,6 +216,7 @@ pub enum BlockElement {
   CodeBlock(String, String)
   UnorderedList(Array[ListItem])
   OrderedList(Array[ListItem])
+  Table(Array[Array[InlineElement]], Array[Array[Array[InlineElement]]])
   ThematicBreak
   EmptyLine
 }

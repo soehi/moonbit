@@ -20,6 +20,7 @@ pub enum BlockElement {
   CodeBlock(String, String)
   UnorderedList(Array[ListItem])
   OrderedList(Array[ListItem])
+  Table(Array[Array[InlineElement]], Array[Array[Array[InlineElement]]])
   ThematicBreak
   EmptyLine
 }
@@ -317,6 +318,27 @@ pub fn render_block(block : BlockElement) -> String {
       html.write_string("</ol>\n")
       html.to_string()
     }
+    Table(headers, rows) => {
+      let html = StringBuilder::new()
+      html.write_string("<table>\n<thead>\n<tr>\n")
+      for header in headers {
+        html.write_string("<th>")
+        html.write_string(render_inline_elements(header))
+        html.write_string("</th>\n")
+      }
+      html.write_string("</tr>\n</thead>\n<tbody>\n")
+      for row in rows {
+        html.write_string("<tr>\n")
+        for cell in row {
+          html.write_string("<td>")
+          html.write_string(render_inline_elements(cell))
+          html.write_string("</td>\n")
+        }
+        html.write_string("</tr>\n")
+      }
+      html.write_string("</tbody>\n</table>\n")
+      html.to_string()
+    }
     ThematicBreak => "<hr />\n"
     EmptyLine => ""
   }
@@ -330,6 +352,27 @@ pub fn render_blocks(blocks : Array[BlockElement]) -> String {
     html.write_string(render_block(block))
   }
   html.to_string()
+}
+
+///|
+/// 解析表格行（以 | 分隔的单元格）
+fn parse_table_row(line : String) -> Array[String] {
+  let cells = Array::new()
+  let trimmed = line.trim()
+  // 去掉开头和结尾的 |
+  let mut content = trimmed
+  if content.has_prefix("|") {
+    content = content.sub(start=1).to_owned()
+  }
+  if content.has_suffix("|") {
+    content = content.sub(end=content.length() - 1).to_owned()
+  }
+  // 按 | 分割
+  let parts = content.split("|")
+  for part in parts {
+    cells.push(part.trim().to_owned())
+  }
+  cells
 }
 
 ///|
@@ -465,6 +508,38 @@ pub fn parse_markdown(text : String) -> Document {
       }
       blocks.push(OrderedList(items))
       continue
+    }
+
+    // 表格
+    if trimmed.has_prefix("|") && i.val + 1 < lines.length() {
+      let next_line = lines[i.val + 1].trim()
+      if next_line.has_prefix("|") && (next_line.find("---").is_some() || next_line.find("===").is_some()) {
+        // 解析表头
+        let header_cells = parse_table_row(trimmed.to_owned())
+        let headers = Array::new()
+        for cell in header_cells {
+          headers.push(parse_inline(cell))
+        }
+        i.val = i.val + 2 // 跳过表头和分隔行
+        // 解析表格行
+        let rows = Array::new()
+        while i.val < lines.length() {
+          let row_line = lines[i.val].trim()
+          if row_line.has_prefix("|") {
+            let row_cells = parse_table_row(row_line.to_owned())
+            let row = Array::new()
+            for cell in row_cells {
+              row.push(parse_inline(cell))
+            }
+            rows.push(row)
+            i.val = i.val + 1
+          } else {
+            break
+          }
+        }
+        blocks.push(Table(headers, rows))
+        continue
+      }
     }
 
     // 普通段落
