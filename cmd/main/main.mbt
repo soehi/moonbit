@@ -352,6 +352,25 @@ async fn main {
           PositionArg("file2", about="新文件"),
         ],
       ),
+      // md - Markdown 渲染器
+      @argparse.Command(
+        "md",
+        about="Markdown 渲染为 HTML",
+        flags=[
+          FlagArg("full", short='f', long="full", about="生成完整 HTML 文档"),
+        ],
+        options=[
+          OptionArg("title", short='t', long="title", about="HTML 文档标题"),
+        ],
+        positionals=[
+          PositionArg(
+            "file",
+            about="Markdown 文件路径（不指定则从 stdin 读取）",
+            num_args=ValueRange(lower=0),
+            allow_hyphen_values=true,
+          ),
+        ],
+      ),
     ],
     subcommand_required=true,
     arg_required_else_help=true,
@@ -373,6 +392,7 @@ async fn main {
         "cut" => @moonsh.run_cut(sub_matches)
         "tr" => @moonsh.run_tr(sub_matches)
         "diff" => @moonsh.run_diff(sub_matches)
+        "md" => @moonsh.run_md(sub_matches)
         _ => @stdio.stdout.write("Unknown command: \{name}\n")
       }
     None => @stdio.stdout.write("Usage: moonsh <command> [options]\n")
