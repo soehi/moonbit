@@ -640,3 +640,182 @@ test "uniq_lines - only duplicate" {
   let result = uniq_lines(["a", "a", "b"], opts)
   assert_eq(result.length(), 2)
 }
+
+// ============================================================
+// markdown 模块测试
+// ============================================================
+
+///|
+test "escape_html - basic" {
+  assert_eq(escape_html("a < b"), "a &lt; b")
+  assert_eq(escape_html("a & b"), "a &amp; b")
+  assert_eq(escape_html("x > y"), "x &gt; y")
+}
+
+///|
+test "escape_html - quotes" {
+  assert_eq(escape_html("a\"b"), "a&quot;b")
+}
+
+///|
+test "parse_inline - plain text" {
+  let result = parse_inline("hello world")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is PlainText("hello world"))
+}
+
+///|
+test "parse_inline - bold with **" {
+  let result = parse_inline("**bold**")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is StrongEmphasis("bold"))
+}
+
+///|
+test "parse_inline - italic with *" {
+  let result = parse_inline("*italic*")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is Emphasis("italic"))
+}
+
+///|
+test "parse_inline - inline code" {
+  let result = parse_inline("`code`")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is Code("code"))
+}
+
+///|
+test "parse_inline - link" {
+  let result = parse_inline("[text](url)")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is Link("text", "url"))
+}
+
+///|
+test "parse_inline - image" {
+  let result = parse_inline("![alt](img.png)")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is Image("alt", "img.png"))
+}
+
+///|
+test "parse_inline - strikethrough" {
+  let result = parse_inline("~~deleted~~")
+  assert_eq(result.length(), 1)
+  assert_true(result[0] is Strikethrough("deleted"))
+}
+
+///|
+test "parse_inline - mixed" {
+  let result = parse_inline("hello **bold** world")
+  assert_eq(result.length(), 3)
+  assert_true(result[0] is PlainText("hello "))
+  assert_true(result[1] is StrongEmphasis("bold"))
+  assert_true(result[2] is PlainText(" world"))
+}
+
+///|
+test "markdown_to_html - heading" {
+  let html = markdown_to_html("# Hello")
+  assert_eq(html, "<h1>Hello</h1>\n")
+}
+
+///|
+test "markdown_to_html - paragraph" {
+  let html = markdown_to_html("Hello world")
+  assert_eq(html, "<p>Hello world</p>\n")
+}
+
+///|
+test "markdown_to_html - bold and italic" {
+  let html = markdown_to_html("**bold** and *italic*")
+  assert_true(html.contains("<strong>bold</strong>"))
+  assert_true(html.contains("<em>italic</em>"))
+}
+
+///|
+test "markdown_to_html - code block" {
+  let html = markdown_to_html("```\nlet x = 1\n```")
+  assert_true(html.contains("<pre><code>"))
+  assert_true(html.contains("let x = 1"))
+}
+
+///|
+test "markdown_to_html - code block with language" {
+  let html = markdown_to_html("```rust\nfn main() {}\n```")
+  assert_true(html.contains("language-rust"))
+}
+
+///|
+test "markdown_to_html - link" {
+  let html = markdown_to_html("[click](https://example.com)")
+  assert_true(html.contains("<a href=\"https://example.com\">click</a>"))
+}
+
+///|
+test "markdown_to_html - image" {
+  let html = markdown_to_html("![alt](img.png)")
+  assert_true(html.contains("<img src=\"img.png\" alt=\"alt\" />"))
+}
+
+///|
+test "markdown_to_html - unordered list" {
+  let html = markdown_to_html("- item1\n- item2")
+  assert_true(html.contains("<ul>"))
+  assert_true(html.contains("<li>"))
+  assert_true(html.contains("item1"))
+  assert_true(html.contains("item2"))
+}
+
+///|
+test "markdown_to_html - ordered list" {
+  let html = markdown_to_html("1. first\n2. second")
+  assert_true(html.contains("<ol>"))
+  assert_true(html.contains("first"))
+  assert_true(html.contains("second"))
+}
+
+///|
+test "markdown_to_html - blockquote" {
+  let html = markdown_to_html("> quoted text")
+  assert_true(html.contains("<blockquote>"))
+  assert_true(html.contains("quoted text"))
+}
+
+///|
+test "markdown_to_html - thematic break" {
+  let html = markdown_to_html("---")
+  assert_eq(html, "<hr />\n")
+}
+
+///|
+test "markdown_to_html - table" {
+  let md = "| A | B |\n|---|---|\n| 1 | 2 |"
+  let html = markdown_to_html(md)
+  assert_true(html.contains("<table>"))
+  assert_true(html.contains("<th>A</th>"))
+  assert_true(html.contains("<td>1</td>"))
+}
+
+///|
+test "markdown_to_html - multiple blocks" {
+  let md = "# Title\n\nParagraph\n\n- list"
+  let html = markdown_to_html(md)
+  assert_true(html.contains("<h1>"))
+  assert_true(html.contains("<p>"))
+  assert_true(html.contains("<ul>"))
+}
+
+///|
+test "md_render - alias" {
+  let html = md_render("# Hi")
+  assert_eq(html, "<h1>Hi</h1>\n")
+}
+
+///|
+test "md_render_with_options - no wrap" {
+  let opts = MarkdownOptions::default()
+  let html = md_render_with_options("# Hi", opts)
+  assert_eq(html, "<h1>Hi</h1>\n")
+}

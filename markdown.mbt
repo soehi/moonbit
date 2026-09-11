@@ -79,7 +79,7 @@ pub fn parse_inline(text : String) -> Array[InlineElement] {
         i.val = i.val + 1
       }
       if i.val < len {
-        i.val = i.val + 1
+        i.val = i.val + 2
       }
       elements.push(StrongEmphasis(bold_text.to_string()))
     } else if c == '_' && i.val + 1 < len && chars.val[i.val + 1] == '_' {
@@ -94,7 +94,7 @@ pub fn parse_inline(text : String) -> Array[InlineElement] {
         i.val = i.val + 1
       }
       if i.val < len {
-        i.val = i.val + 1
+        i.val = i.val + 2
       }
       elements.push(StrongEmphasis(bold_text.to_string()))
     } else if c == '*' {
