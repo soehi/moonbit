@@ -34,6 +34,8 @@ pub fn diff_summary(DiffResult) -> String
 
 pub fn diff_text(String, String) -> DiffResult
 
+pub fn escape_html(String) -> String
+
 pub fn file_type_color(FileType) -> Color
 
 pub fn file_type_icon(FileType) -> String
@@ -90,6 +92,12 @@ pub fn join_paths(String, String) -> String
 
 pub fn line_level_diff(Array[String], Array[String]) -> Array[(DiffOp, Int, Int)]
 
+pub fn markdown_to_html(String) -> String
+
+pub fn md_render(String) -> String
+
+pub fn md_render_with_options(String, MarkdownOptions) -> String
+
 pub let moonsh_description : String
 
 pub let moonsh_version : String
@@ -106,7 +114,11 @@ pub fn parent_dir(String) -> String
 
 pub fn parse_charset(String) -> CharSet
 
+pub fn parse_inline(String) -> Array[InlineElement]
+
 pub fn parse_int_safe(String, Int) -> Int
+
+pub fn parse_markdown(String) -> Document
 
 pub fn parse_positions(String) -> Array[(Int, Int)]
 
@@ -138,6 +150,12 @@ pub fn relative_path(String, String) -> String
 
 pub fn remove_extension(String) -> String
 
+pub fn render_block(BlockElement) -> String
+
+pub fn render_blocks(Array[BlockElement]) -> String
+
+pub fn render_inline_elements(Array[InlineElement]) -> String
+
 pub fn repeat_char(Char, Int) -> String
 
 pub fn repeat_str(String, Int) -> String
@@ -157,6 +175,8 @@ pub async fn run_grep(@argparse.Matches) -> Unit
 pub async fn run_head(@argparse.Matches) -> Unit
 
 pub async fn run_ls(@argparse.Matches) -> Unit
+
+pub async fn run_md(@argparse.Matches) -> Unit
 
 pub async fn run_sort(@argparse.Matches) -> Unit
 
@@ -189,6 +209,17 @@ pub fn uniq_lines(Array[String], UniqOptions) -> Array[String]
 // Errors
 
 // Types and methods
+pub enum BlockElement {
+  Heading(Int, Array[InlineElement])
+  Paragraph(Array[InlineElement])
+  Blockquote(Array[BlockElement])
+  CodeBlock(String, String)
+  UnorderedList(Array[ListItem])
+  OrderedList(Array[ListItem])
+  ThematicBreak
+  EmptyLine
+}
+
 pub struct CharSet {
   chars : Array[Char]
   ranges : Array[(Char, Char)]
@@ -246,6 +277,10 @@ pub struct DiffResult {
   changed : Int
 }
 
+pub struct Document {
+  blocks : Array[BlockElement]
+}
+
 pub enum FileType {
   Regular
   Directory
@@ -259,6 +294,27 @@ pub enum FileType {
   Video
   Other
 }
+
+pub enum InlineElement {
+  PlainText(String)
+  Emphasis(String)
+  StrongEmphasis(String)
+  Code(String)
+  Link(String, String)
+  Image(String, String)
+  Strikethrough(String)
+}
+
+pub struct ListItem {
+  blocks : Array[BlockElement]
+}
+
+pub struct MarkdownOptions {
+  wrap_in_html : Bool
+  title : String
+  css : String
+}
+pub fn MarkdownOptions::default() -> Self
 
 pub enum PathType {
   Absolute
