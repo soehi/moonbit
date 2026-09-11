@@ -11,7 +11,7 @@ AIGC:
 
 # moonsh
 
-> 现代化 Shell 命令行工具集 — 用 MoonBit 语言编写的 13 个核心 Unix 命令的现代化重新实现
+> 现代化 Shell 命令行工具集 — 用 MoonBit 语言编写的 14 个核心 Unix 命令的现代化重新实现
 
 [![CI](https://github.com/shiwork/moonsh/actions/workflows/ci.yml/badge.svg)](https://github.com/shiwork/moonsh/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
@@ -19,7 +19,7 @@ AIGC:
 
 ## 简介
 
-`moonsh` 是一个用 [MoonBit](https://moonbitlang.com) 语言编写的命令行工具集，包含了 13 个日常开发中最常用的 Shell 命令。项目灵感来自 Rust 生态中的 [bat](https://github.com/sharkdp/bat)、[eza](https://github.com/eza-community/eza)、[fd](https://github.com/sharkdp/fd) 和 [ripgrep](https://github.com/BurntSushi/ripgrep) 等现代化工具，旨在用纯 MoonBit 重新实现这些经典命令，展示 MoonBit 在系统编程领域的潜力。
+`moonsh` 是一个用 [MoonBit](https://moonbitlang.com) 语言编写的命令行工具集，包含了 14 个日常开发中最常用的 Shell 命令。项目灵感来自 Rust 生态中的 [bat](https://github.com/sharkdp/bat)、[eza](https://github.com/eza-community/eza)、[fd](https://github.com/sharkdp/fd) 和 [ripgrep](https://github.com/BurntSushi/ripgrep) 等现代化工具，旨在用纯 MoonBit 重新实现这些经典命令，展示 MoonBit 在系统编程领域的潜力。
 
 ### 为什么用 MoonBit？
 
@@ -45,6 +45,7 @@ AIGC:
 | `cut` | 提取字段或字符（分隔符/字符位置/字节位置） | cut |
 | `tr` | 字符转换/删除/压缩（POSIX 字符类/转义字符） | tr |
 | `diff` | 比较文件差异（LCS 算法/统一格式/彩色输出） | diff |
+| `md` | Markdown 渲染为 HTML（支持标准 Markdown 语法） | pandoc / marked |
 
 ## 安装
 
@@ -180,6 +181,15 @@ moon run cmd/main -- diff old.txt new.txt           # 比较差异
 moon run cmd/main -- diff -c old.txt new.txt        # 彩色输出
 ```
 
+### md — Markdown 渲染
+
+```bash
+moon run cmd/main -- md file.md                     # Markdown 转 HTML
+moon run cmd/main -- md -f file.md                  # 生成完整 HTML 文档
+moon run cmd/main -- md -t "My Doc" file.md         # 指定文档标题
+echo "# Hello" | moon run cmd/main -- md -          # 从 stdin 读取
+```
+
 ## 项目结构
 
 ```
@@ -202,6 +212,7 @@ moonsh/
 ├── cut.mbt               # cut 命令
 ├── tr.mbt                # tr 命令
 ├── diff.mbt              # diff 命令
+├── markdown.mbt          # Markdown 解析器和 HTML 渲染器
 ├── moonsh_test.mbt       # 黑盒测试
 ├── moonsh_wbtest.mbt     # 白盒测试
 ├── cmd/main/
@@ -221,6 +232,7 @@ moonsh/
 - **Glob 匹配引擎**：支持 `*`、`?`、`[abc]`、`[a-z]`、`[!abc]` 和 `**` 跨目录匹配，用于 `find` 命令的文件名过滤
 - **正则表达式引擎**：支持 `.`、`*`、`+`、`?`、`^`、`$`、`[a-z]`、`[^abc]`、`\d`、`\w`、`\s`、`\b`、`()` 分组，采用贪心匹配 + 回溯策略，用于 `grep` 命令的文本搜索
 - **LCS 差异算法**：基于最长公共子序列的文本差异比较，用于 `diff` 命令
+- **Markdown 解析器**：纯 MoonBit 实现的 Markdown 解析器，支持标题、段落、列表、代码块、引用、链接、图片、粗体、斜体、删除线等语法
 
 ### 异步 I/O
 
