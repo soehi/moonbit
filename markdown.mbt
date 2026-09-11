@@ -513,7 +513,7 @@ pub fn parse_markdown(text : String) -> Document {
     // 表格
     if trimmed.has_prefix("|") && i.val + 1 < lines.length() {
       let next_line = lines[i.val + 1].trim()
-      if next_line.has_prefix("|") && (next_line.find("---").is_some() || next_line.find("===").is_some()) {
+      if next_line.has_prefix("|") && (next_line.find("---") is Some(_) || next_line.find("===") is Some(_)) {
         // 解析表头
         let header_cells = parse_table_row(trimmed.to_owned())
         let headers = Array::new()
