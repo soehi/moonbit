@@ -4,14 +4,17 @@
 ///|
 test "doctor - complete MoonBit workspace" {
   let report = audit_workspace([
-    "moon.mod", "moon.pkg", "README.md", "LICENSE", ".github/workflows/ci.yml", "src/main.mbt",
-    "src/main_test.mbt", "cmd/main/moon.pkg",
+    "moon.mod", "moon.pkg", "README.md", "LICENSE", ".github/workflows/ci.yml", "main.mbt",
+    "main_test.mbt", "cmd/main/moon.pkg", "cmd/main/main_test.mbt",
   ])
   assert_eq(report.score, 100)
-  assert_eq(report.moonbit_files, 2)
-  assert_eq(report.test_files, 1)
+  assert_eq(report.moonbit_files, 3)
+  assert_eq(report.test_files, 2)
   assert_eq(report.packages, 2)
+  assert_eq(report.untested_packages, 0)
+  assert_eq(audit_grade(report.score), "A")
   assert_true(format_workspace_audit(report).contains("[PASS] tests"))
+  assert_true(format_workspace_audit(report).contains("package-tests"))
 }
 
 ///|
@@ -19,6 +22,7 @@ test "doctor - reports missing project essentials" {
   let report = audit_workspace(["src/main.mbt"])
   assert_eq(report.score, 20)
   assert_eq(report.findings.length(), 7)
+  assert_eq(audit_grade(report.score), "F")
   assert_true(format_workspace_audit(report).contains("[FAIL] module"))
   assert_true(format_workspace_audit(report).contains("[WARN] tests"))
 }
@@ -30,6 +34,55 @@ test "doctor - normalizes Windows paths and case" {
     "LIB\\CORE.MBT", "LIB\\CORE_WBTEST.MBT",
   ])
   assert_eq(report.score, 100)
+}
+
+///|
+test "doctor - detects packages without colocated tests" {
+  let report = audit_workspace([
+    "moon.mod", "moon.pkg", "README.md", "LICENSE", ".github/workflows/ci.yml", "lib/moon.pkg",
+    "main.mbt", "main_test.mbt", "lib/core.mbt",
+  ])
+  assert_eq(report.score, 100)
+  assert_eq(report.untested_packages, 1)
+  assert_true(
+    format_workspace_audit(report).contains(
+      "1 个包没有同目录测试文件",
+    ),
+  )
+}
+
+///|
+test "doctor - JSON output" {
+  let report = audit_workspace(["moon.mod", "moon.pkg", "main.mbt"])
+  let json = format_workspace_audit_json(report)
+  assert_true(json.has_prefix("{\"score\":"))
+  assert_true(json.contains("\"grade\":\""))
+  assert_true(json.contains("\"untestedPackages\":1"))
+  assert_true(json.contains("\"severity\":\"warning\""))
+}
+
+///|
+test "doctor - Markdown and badge output" {
+  let report = audit_workspace([
+    "moon.mod", "moon.pkg", "README.md", "LICENSE", ".github/workflows/ci.yml", "main.mbt",
+    "main_test.mbt",
+  ])
+  let markdown = format_workspace_audit_markdown(report)
+  assert_true(markdown.has_prefix("## Moonsh Doctor"))
+  assert_true(markdown.contains("| ✅ | `module` |"))
+  let badge = format_workspace_audit_badge(report)
+  assert_true(badge.contains("moonsh%20doctor-A%20100%2F100-brightgreen"))
+}
+
+///|
+test "doctor - grade boundaries" {
+  assert_eq(audit_grade(100), "A")
+  assert_eq(audit_grade(90), "A")
+  assert_eq(audit_grade(89), "B")
+  assert_eq(audit_grade(75), "B")
+  assert_eq(audit_grade(60), "C")
+  assert_eq(audit_grade(40), "D")
+  assert_eq(audit_grade(39), "F")
 }
 
 ///|
@@ -356,7 +409,7 @@ test "supported_commands" {
 
 ///|
 test "moonsh_version" {
-  assert_eq(moonsh_version, "0.2.0")
+  assert_eq(moonsh_version, "0.3.0")
 }
 
 // ============================================================

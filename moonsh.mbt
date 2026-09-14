@@ -616,7 +616,7 @@ fn is_leap_year(year : Int) -> Bool {
 
 ///|
 /// 版本号
-pub let moonsh_version : String = "0.2.0"
+pub let moonsh_version : String = "0.3.0"
 
 ///|
 /// moonsh 的完整描述

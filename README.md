@@ -87,9 +87,21 @@ moon add shiwork/moonsh
 
 ```bash
 moon run cmd/main -- doctor .
+moon run cmd/main -- doctor --format json .       # CI / 程序消费
+moon run cmd/main -- doctor --format markdown .   # GitHub Actions Summary
+moon run cmd/main -- doctor --format badge .      # README 徽章
 ```
 
-`doctor` 会跳过 `.git`、`.mooncakes`、`_build`、`target` 和 `node_modules`，给出 0–100 分以及逐项 `PASS` / `WARN` / `FAIL` 结果。其纯函数 API `audit_workspace` 可直接接收相对路径数组，不依赖文件系统，便于单元测试和二次集成。
+`doctor` 会跳过 `.git`、`.mooncakes`、`_build`、`target` 和 `node_modules`，给出 A–F 健康等级、0–100 分以及逐项 `PASS` / `WARN` / `FAIL` 结果。它还会按 `moon.pkg` 所在目录检查测试是否就位。其纯函数 API `audit_workspace` 可直接接收相对路径数组，不依赖文件系统，便于单元测试和二次集成。
+
+四种输出格式对应不同场景：
+
+| 格式 | 用途 |
+|---|---|
+| `text` | 本地终端阅读，默认格式 |
+| `json` | CI、编辑器和其他程序读取 |
+| `markdown` | 写入 `$GITHUB_STEP_SUMMARY` |
+| `badge` | 生成按分数变色的 shields.io 徽章 Markdown |
 
 ### ls — 列出目录
 
@@ -256,7 +268,7 @@ moonsh/
 
 ### 测试覆盖
 
-项目包含 **178 个测试用例**，覆盖所有命令的核心功能和边界条件，包括 `doctor` 的完整工程、缺失要素和 Windows 路径归一化场景：
+项目包含 **183 个测试用例**，覆盖所有命令的核心功能和边界条件，包括 `doctor` 的包级测试检查、JSON/Markdown/徽章输出、等级边界和 Windows 路径归一化场景：
 
 - 黑盒测试（`moonsh_test.mbt`）：测试公开 API 的输入输出
 - 白盒测试（`moonsh_wbtest.mbt`）：测试内部实现细节

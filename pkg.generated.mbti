@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn audit_grade(Int) -> String
+
 pub fn audit_workspace(Array[String]) -> WorkspaceAudit
 
 pub fn char_in_set(Char, CharSet) -> Bool
@@ -55,6 +57,12 @@ pub fn format_size_int(Int) -> String
 pub fn format_timestamp(Int64) -> String
 
 pub fn format_workspace_audit(WorkspaceAudit) -> String
+
+pub fn format_workspace_audit_badge(WorkspaceAudit) -> String
+
+pub fn format_workspace_audit_json(WorkspaceAudit) -> String
+
+pub fn format_workspace_audit_markdown(WorkspaceAudit) -> String
 
 pub fn get_basename(String) -> String
 
@@ -405,6 +413,7 @@ pub struct WorkspaceAudit {
   moonbit_files : Int
   test_files : Int
   packages : Int
+  untested_packages : Int
   findings : Array[AuditFinding]
 }
 

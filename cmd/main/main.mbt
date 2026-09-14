@@ -380,6 +380,15 @@ async fn main {
       @argparse.Command(
         "doctor",
         about="检查 MoonBit 工作区的结构、测试、文档、许可证和 CI",
+        options=[
+          OptionArg(
+            "format",
+            short='f',
+            long="format",
+            about="输出格式：text、json、markdown 或 badge",
+            default_values=["text"],
+          ),
+        ],
         positionals=[
           PositionArg(
             "path",

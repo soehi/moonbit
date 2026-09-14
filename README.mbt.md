@@ -85,9 +85,12 @@ moon add shiwork/moonsh
 
 ```bash
 moon run cmd/main -- doctor .
+moon run cmd/main -- doctor --format json .
+moon run cmd/main -- doctor --format markdown .
+moon run cmd/main -- doctor --format badge .
 ```
 
-核心函数 `audit_workspace` 也可被其他 MoonBit 包直接调用。
+支持终端文本、JSON、GitHub Markdown 和徽章四种输出，并会检查每个 `moon.pkg` 所在目录是否有测试文件。核心函数 `audit_workspace` 也可被其他 MoonBit 包直接调用。
 
 ### ls — 列出目录
 
@@ -243,7 +246,7 @@ moonsh/
 
 ### 测试覆盖
 
-项目包含 **178 个测试用例**，覆盖所有命令和工作区诊断的核心功能与边界条件：
+项目包含 **183 个测试用例**，覆盖所有命令和工作区诊断的核心功能与边界条件：
 
 - 黑盒测试（`moonsh_test.mbt`）：测试公开 API 的输入输出
 - 白盒测试（`moonsh_wbtest.mbt`）：测试内部实现细节
