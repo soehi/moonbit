@@ -616,18 +616,18 @@ fn is_leap_year(year : Int) -> Bool {
 
 ///|
 /// 版本号
-pub let moonsh_version : String = "0.1.0"
+pub let moonsh_version : String = "0.2.0"
 
 ///|
 /// moonsh 的完整描述
-pub let moonsh_description : String = "现代化 Shell 命令行工具集"
+pub let moonsh_description : String = "MoonBit 工作区健康诊断与跨平台文本处理工具"
 
 ///|
 /// 支持的命令列表
 pub fn supported_commands() -> Array[String] {
   [
     "ls", "cat", "find", "grep", "wc", "head", "tail", "stat", "sort", "uniq", "cut",
-    "tr", "diff",
+    "tr", "diff", "md", "doctor",
   ]
 }
 

@@ -13,6 +13,7 @@ pub enum InlineElement {
   Strikethrough(String)
 }
 
+///|
 pub enum BlockElement {
   Heading(Int, Array[InlineElement])
   Paragraph(Array[InlineElement])
@@ -25,10 +26,12 @@ pub enum BlockElement {
   EmptyLine
 }
 
+///|
 pub struct ListItem {
   blocks : Array[BlockElement]
 }
 
+///|
 pub struct Document {
   blocks : Array[BlockElement]
 }
@@ -150,7 +153,9 @@ pub fn parse_inline(text : String) -> Array[InlineElement] {
       i.val = i.val + 2
       let strike_text = StringBuilder::new()
       while i.val < len {
-        if chars.val[i.val] == '~' && i.val + 1 < len && chars.val[i.val + 1] == '~' {
+        if chars.val[i.val] == '~' &&
+          i.val + 1 < len &&
+          chars.val[i.val + 1] == '~' {
           break
         }
         strike_text.write_char(chars.val[i.val])
@@ -493,11 +498,17 @@ pub fn parse_markdown(text : String) -> Document {
     }
 
     // 有序列表
-    if trimmed.length() >= 2 && trimmed[0] >= '0' && trimmed[0] <= '9' && trimmed[1] == '.' {
+    if trimmed.length() >= 2 &&
+      trimmed[0] >= '0' &&
+      trimmed[0] <= '9' &&
+      trimmed[1] == '.' {
       let items = Array::new()
       while i.val < lines.length() {
         let current = lines[i.val].trim()
-        if current.length() >= 2 && current[0] >= '0' && current[0] <= '9' && current[1] == '.' {
+        if current.length() >= 2 &&
+          current[0] >= '0' &&
+          current[0] <= '9' &&
+          current[1] == '.' {
           let content = current.sub(start=2).to_owned()
           let elements = parse_inline(content)
           items.push(ListItem::{ blocks: [Paragraph(elements)] })
@@ -513,7 +524,8 @@ pub fn parse_markdown(text : String) -> Document {
     // 表格
     if trimmed.has_prefix("|") && i.val + 1 < lines.length() {
       let next_line = lines[i.val + 1].trim()
-      if next_line.has_prefix("|") && (next_line.find("---") is Some(_) || next_line.find("===") is Some(_)) {
+      if next_line.has_prefix("|") &&
+        (next_line.find("---") is Some(_) || next_line.find("===") is Some(_)) {
         // 解析表头
         let header_cells = parse_table_row(trimmed.to_owned())
         let headers = Array::new()
@@ -549,16 +561,23 @@ pub fn parse_markdown(text : String) -> Document {
       if current.length() == 0 {
         break
       }
-      if current.has_prefix("#") || current.has_prefix("```") || current.has_prefix("> ") {
+      if current.has_prefix("#") ||
+        current.has_prefix("```") ||
+        current.has_prefix("> ") {
         break
       }
       if current == "---" || current == "***" || current == "___" {
         break
       }
-      if (current.has_prefix("- ") || current.has_prefix("* ")) && para_lines.length() > 0 {
+      if (current.has_prefix("- ") || current.has_prefix("* ")) &&
+        para_lines.length() > 0 {
         break
       }
-      if current.length() >= 2 && current[0] >= '0' && current[0] <= '9' && current[1] == '.' && para_lines.length() > 0 {
+      if current.length() >= 2 &&
+        current[0] >= '0' &&
+        current[0] <= '9' &&
+        current[1] == '.' &&
+        para_lines.length() > 0 {
         break
       }
       para_lines.push(current)
@@ -571,7 +590,7 @@ pub fn parse_markdown(text : String) -> Document {
     }
   }
 
-  Document::{ blocks: blocks }
+  Document::{ blocks, }
 }
 
 ///|
@@ -589,6 +608,7 @@ pub struct MarkdownOptions {
   css : String
 }
 
+///|
 pub fn MarkdownOptions::default() -> MarkdownOptions {
   MarkdownOptions::{
     wrap_in_html: false,
@@ -605,10 +625,19 @@ pub fn md_render(text : String) -> String {
 
 ///|
 /// 将 Markdown 渲染为 HTML（带选项）
-pub fn md_render_with_options(text : String, options : MarkdownOptions) -> String {
+pub fn md_render_with_options(
+  text : String,
+  options : MarkdownOptions,
+) -> String {
   let html = markdown_to_html(text)
   if options.wrap_in_html {
-    "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>" + options.title + "</title>\n<style>" + options.css + "</style>\n</head>\n<body>\n" + html + "</body>\n</html>"
+    "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>" +
+    options.title +
+    "</title>\n<style>" +
+    options.css +
+    "</style>\n</head>\n<body>\n" +
+    html +
+    "</body>\n</html>"
   } else {
     html
   }
@@ -632,7 +661,11 @@ pub async fn run_md(matches : @argparse.Matches) -> Unit {
   let options = if full {
     MarkdownOptions::{
       wrap_in_html: true,
-      title: if title.length() > 0 { title } else { "Markdown Document" },
+      title: if title.length() > 0 {
+        title
+      } else {
+        "Markdown Document"
+      },
       css: "body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }\npre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }\ncode { background: #f5f5f5; padding: 2px 4px; border-radius: 2px; }\nblockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 16px; color: #666; }\n",
     }
   } else {

@@ -357,7 +357,12 @@ async fn main {
         "md",
         about="Markdown 渲染为 HTML",
         flags=[
-          FlagArg("full", short='f', long="full", about="生成完整 HTML 文档"),
+          FlagArg(
+            "full",
+            short='f',
+            long="full",
+            about="生成完整 HTML 文档",
+          ),
         ],
         options=[
           OptionArg("title", short='t', long="title", about="HTML 文档标题"),
@@ -368,6 +373,18 @@ async fn main {
             about="Markdown 文件路径（不指定则从 stdin 读取）",
             num_args=ValueRange(lower=0),
             allow_hyphen_values=true,
+          ),
+        ],
+      ),
+      // doctor - MoonBit 工作区健康检查
+      @argparse.Command(
+        "doctor",
+        about="检查 MoonBit 工作区的结构、测试、文档、许可证和 CI",
+        positionals=[
+          PositionArg(
+            "path",
+            about="工作区路径（默认当前目录）",
+            num_args=ValueRange(lower=0),
           ),
         ],
       ),
@@ -393,6 +410,7 @@ async fn main {
         "tr" => @moonsh.run_tr(sub_matches)
         "diff" => @moonsh.run_diff(sub_matches)
         "md" => @moonsh.run_md(sub_matches)
+        "doctor" => @moonsh.run_doctor(sub_matches)
         _ => @stdio.stdout.write("Unknown command: \{name}\n")
       }
     None => @stdio.stdout.write("Usage: moonsh <command> [options]\n")

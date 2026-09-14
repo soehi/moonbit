@@ -11,7 +11,7 @@
 
 name = "shiwork/moonsh"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.mbt.md"
 
@@ -23,7 +23,7 @@ keywords = [ "cli", "shell", "ls", "grep", "find", "cat", "terminal", "tools" ]
 
 preferred_target = "native"
 
-description = "现代化 Shell 命令行工具集 — ls/cat/find/grep/wc/head/tail/stat"
+description = "MoonBit 工作区健康诊断与跨平台文本处理工具"
 
 import {
   "moonbitlang/async@0.21.0",

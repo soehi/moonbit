@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn audit_workspace(Array[String]) -> WorkspaceAudit
+
 pub fn char_in_set(Char, CharSet) -> Bool
 
 pub fn char_to_lower(Char) -> Char
@@ -51,6 +53,8 @@ pub fn format_size(Int64) -> String
 pub fn format_size_int(Int) -> String
 
 pub fn format_timestamp(Int64) -> String
+
+pub fn format_workspace_audit(WorkspaceAudit) -> String
 
 pub fn get_basename(String) -> String
 
@@ -168,6 +172,8 @@ pub async fn run_cut(@argparse.Matches) -> Unit
 
 pub async fn run_diff(@argparse.Matches) -> Unit
 
+pub async fn run_doctor(@argparse.Matches) -> Unit
+
 pub async fn run_find(@argparse.Matches) -> Unit
 
 pub async fn run_grep(@argparse.Matches) -> Unit
@@ -209,6 +215,18 @@ pub fn uniq_lines(Array[String], UniqOptions) -> Array[String]
 // Errors
 
 // Types and methods
+pub struct AuditFinding {
+  severity : AuditSeverity
+  code : String
+  message : String
+}
+
+pub enum AuditSeverity {
+  Pass
+  Warning
+  Error
+}
+
 pub enum BlockElement {
   Heading(Int, Array[InlineElement])
   Paragraph(Array[InlineElement])
@@ -380,6 +398,14 @@ pub struct WcResult {
   chars : Int
   bytes : Int
   max_line_length : Int
+}
+
+pub struct WorkspaceAudit {
+  score : Int
+  moonbit_files : Int
+  test_files : Int
+  packages : Int
+  findings : Array[AuditFinding]
 }
 
 // Type aliases

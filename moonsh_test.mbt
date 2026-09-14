@@ -2,6 +2,37 @@
 // 测试公共 API 的正确性
 
 ///|
+test "doctor - complete MoonBit workspace" {
+  let report = audit_workspace([
+    "moon.mod", "moon.pkg", "README.md", "LICENSE", ".github/workflows/ci.yml", "src/main.mbt",
+    "src/main_test.mbt", "cmd/main/moon.pkg",
+  ])
+  assert_eq(report.score, 100)
+  assert_eq(report.moonbit_files, 2)
+  assert_eq(report.test_files, 1)
+  assert_eq(report.packages, 2)
+  assert_true(format_workspace_audit(report).contains("[PASS] tests"))
+}
+
+///|
+test "doctor - reports missing project essentials" {
+  let report = audit_workspace(["src/main.mbt"])
+  assert_eq(report.score, 20)
+  assert_eq(report.findings.length(), 7)
+  assert_true(format_workspace_audit(report).contains("[FAIL] module"))
+  assert_true(format_workspace_audit(report).contains("[WARN] tests"))
+}
+
+///|
+test "doctor - normalizes Windows paths and case" {
+  let report = audit_workspace([
+    "MOON.MOD", "Moon.Pkg", "README.MD", "LICENSE.txt", ".GITHUB\\WORKFLOWS\\CI.YAML",
+    "LIB\\CORE.MBT", "LIB\\CORE_WBTEST.MBT",
+  ])
+  assert_eq(report.score, 100)
+}
+
+///|
 test "format_size - bytes" {
   assert_eq(format_size(500L), "500 B")
   assert_eq(format_size(0L), "0 B")
@@ -314,16 +345,18 @@ test "get_positional - default" {
 ///|
 test "supported_commands" {
   let cmds = supported_commands()
-  assert_eq(cmds.length(), 13)
+  assert_eq(cmds.length(), 15)
   assert_eq(cmds[0], "ls")
   assert_eq(cmds[7], "stat")
   assert_eq(cmds[8], "sort")
   assert_eq(cmds[12], "diff")
+  assert_eq(cmds[13], "md")
+  assert_eq(cmds[14], "doctor")
 }
 
 ///|
 test "moonsh_version" {
-  assert_eq(moonsh_version, "0.1.0")
+  assert_eq(moonsh_version, "0.2.0")
 }
 
 // ============================================================

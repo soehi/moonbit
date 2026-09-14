@@ -11,14 +11,20 @@ AIGC:
 
 # moonsh
 
-> 现代化 Shell 命令行工具集 — 用 MoonBit 语言编写的 13 个核心 Unix 命令的现代化重新实现
+> MoonBit 工作区健康诊断工具，并提供一组可复用的跨平台文本处理能力
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![MoonBit](https://img.shields.io/badge/MoonBit-native-orange.svg)](https://moonbitlang.com)
 
 ## 简介
 
-`moonsh` 是一个用 [MoonBit](https://moonbitlang.com) 语言编写的命令行工具集，包含了 13 个日常开发中最常用的 Shell 命令。项目灵感来自 Rust 生态中的 [bat](https://github.com/sharkdp/bat)、[eza](https://github.com/eza-community/eza)、[fd](https://github.com/sharkdp/fd) 和 [ripgrep](https://github.com/BurntSushi/ripgrep) 等现代化工具，旨在用纯 MoonBit 重新实现这些经典命令，展示 MoonBit 在系统编程领域的潜力。
+`moonsh` 的当前主功能是 `doctor`：用纯 MoonBit 扫描工作区，检查模块、包、源码、测试、README、许可证和 CI，并输出稳定的健康报告。诊断核心同时以类型化 API 暴露，可嵌入编辑器、脚手架和 CI 工具。仓库中原有的 Unix 文本命令作为早期原型和底层能力继续保留。
+
+### 与 Mooncakes 现有组件的关系
+
+- `mooxCLI/cmd` 已提供通用 Unix 命令集合；这些兼容命令不再作为 moonsh 的当前核心成果。
+- `mizchi/markdown` 已提供成熟的 Markdown 解析与渲染；后续优先复用成熟组件。
+- `moonsh doctor` 增加的是理解 MoonBit 工程结构并给出质量诊断的语义层。
 
 ### 为什么用 MoonBit？
 
@@ -31,6 +37,7 @@ AIGC:
 
 | 命令 | 功能说明 | 对标工具 |
 |------|---------|---------|
+| `doctor` | 检查 MoonBit 模块、包、源码、测试、README、许可证和 CI | 工程健康诊断（核心） |
 | `ls` | 列出目录内容（短格式/长格式/树形/颜色） | exa / eza |
 | `cat` | 查看文件内容（行号/语法高亮/stdin） | bat |
 | `find` | 搜索文件（glob 模式/类型过滤/深度控制） | fd |
@@ -54,8 +61,8 @@ AIGC:
 curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
 
 # 克隆仓库
-git clone https://github.com/shiwork/moonsh.git
-cd moonsh
+git clone https://github.com/soehi/moonbit.git
+cd moonbit
 
 # 构建项目
 moon build --target native
@@ -73,6 +80,14 @@ moon add shiwork/moonsh
 ```
 
 ## 使用方法
+
+### doctor — MoonBit 工作区健康检查
+
+```bash
+moon run cmd/main -- doctor .
+```
+
+核心函数 `audit_workspace` 也可被其他 MoonBit 包直接调用。
 
 ### ls — 列出目录
 
@@ -201,6 +216,7 @@ moonsh/
 ├── cut.mbt               # cut 命令
 ├── tr.mbt                # tr 命令
 ├── diff.mbt              # diff 命令
+├── doctor.mbt            # MoonBit 工作区诊断模型、规则和 CLI 适配
 ├── moonsh_test.mbt       # 黑盒测试
 ├── moonsh_wbtest.mbt     # 白盒测试
 ├── cmd/main/
@@ -227,7 +243,7 @@ moonsh/
 
 ### 测试覆盖
 
-项目包含 **150 个测试用例**，覆盖所有命令的核心功能和边界条件：
+项目包含 **178 个测试用例**，覆盖所有命令和工作区诊断的核心功能与边界条件：
 
 - 黑盒测试（`moonsh_test.mbt`）：测试公开 API 的输入输出
 - 白盒测试（`moonsh_wbtest.mbt`）：测试内部实现细节
