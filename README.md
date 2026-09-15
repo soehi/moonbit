@@ -94,6 +94,8 @@ moon run cmd/main -- doctor --format badge .      # README 徽章
 
 `doctor` 会跳过 `.git`、`.mooncakes`、`_build`、`target` 和 `node_modules`，给出 A–F 健康等级、0–100 分以及逐项 `PASS` / `WARN` / `FAIL` 结果。它还会按 `moon.pkg` 所在目录检查测试是否就位。其纯函数 API `audit_workspace` 可直接接收相对路径数组，不依赖文件系统，便于单元测试和二次集成。
 
+完整规则、输出字段和集成示例见 [`docs/doctor.md`](docs/doctor.md)。
+
 四种输出格式对应不同场景：
 
 | 格式 | 用途 |
