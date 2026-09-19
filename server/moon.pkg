@@ -15,9 +15,9 @@ import {
 } for "test"
 
 options(
+  "native-stub": [ "ffi_tcp_native.c" ],
   targets: {
     "ffi_tcp_native.mbt": [ "native", "llvm" ],
     "ffi_tcp_stub.mbt": [ "wasm", "wasm-gc", "js" ],
   },
-  link: { "native": { "native-stub": [ "ffi_tcp_native.c" ] } },
 )

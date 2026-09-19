@@ -12,6 +12,7 @@ extern "C" fn tinyhttpd_accept(listen_sock : Int) -> Int = "tinyhttpd_accept"
 
 ///|
 /// Blocking receive; returns bytes read (0 on EOF, -1 on error).
+#borrow(buf)
 extern "C" fn tinyhttpd_read(
   sock : Int,
   buf : FixedArray[Byte],
@@ -20,6 +21,7 @@ extern "C" fn tinyhttpd_read(
 
 ///|
 /// Blocking send from `offset`; returns bytes written or -1.
+#borrow(buf)
 extern "C" fn tinyhttpd_write(
   sock : Int,
   buf : FixedArray[Byte],
