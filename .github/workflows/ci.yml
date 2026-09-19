@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: moon check
+        run: moon check
+
+      - name: moon test (wasm-gc)
+        run: moon test
+
+      - name: moon test (js)
+        run: moon test --target js
+
+      - name: Native build and live smoke test
+        if: runner.os == 'Linux'
+        run: |
+          moon build --target native --release
+          ./_build/native/release/build/cmd/main/main.exe --version
+          ./_build/native/release/build/cmd/main/main.exe --port 18080 &
+          sleep 1
+          curl -sf http://127.0.0.1:18080/ | grep -q "It works"
+          curl -sf "http://127.0.0.1:18080/cgi-bin/env.cgi?name=CI" | grep -q "name=CI"
+          curl -sf "http://127.0.0.1:18080/cgi-bin/color.cgi?color=%2300ff00" | grep -q "#00ff00"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:18080/nope)" = "404"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X DELETE http://127.0.0.1:18080/)" = "501"
+          curl -s -I http://127.0.0.1:18080/ | grep -q "Server: tiny-httpd-moonbit"
+          echo "smoke test OK"

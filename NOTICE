@@ -1,0 +1,17 @@
+tiny-httpd-moonbit
+Copyright (C) 2026 tiny-httpd-moonbit contributors
+
+This project is a MoonBit re-implementation of tinyhttpd, the classic
+minimal HTTP server written in 1999 by J. David Blackstone:
+
+  https://sourceforge.net/projects/tinyhttpd/
+
+The original software is copyright 1999 by J. David Blackstone and is
+distributed under the terms of the GNU General Public License. This
+port is therefore licensed under the GNU General Public License v2.0
+or later (see LICENSE).
+
+The TCP shim in server/ffi_tcp_native.c and all MoonBit sources in
+this repository were written for this project; no original C code was
+copied. tinyhttpd's design (accept loop, request parsing, CGI
+scripting, error pages) is what this project intentionally preserves.
