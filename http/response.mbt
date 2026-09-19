@@ -32,7 +32,11 @@ pub struct Response {
 
 ///|
 /// Build a full response with the standard tiny-httpd headers set.
-pub fn Response::create(status : Int, content_type : String, body : Bytes) -> Response {
+pub fn Response::create(
+  status : Int,
+  content_type : String,
+  body : Bytes,
+) -> Response {
   let resp = { status, headers: @sorted_map.SortedMap([]), body }
   resp.headers.set("Content-Type", content_type)
   resp.headers.set("Content-Length", body.length().to_string())
@@ -92,7 +96,17 @@ pub fn Response::to_wire(self : Response) -> Bytes {
 /// Build an HTML error page in the style of the original tinyhttpd.
 pub fn Response::error(status : Int, message : String) -> Response {
   let reason = reason_phrase(status)
-  let html = "<html>\r\n<head><title>" + status.to_string() + " " + reason + "</title></head>\r\n<body>\r\n<h1>" + status.to_string() + " " + reason + "</h1>\r\n<p>" + escape_html(message) + "</p>\r\n<hr>tiny-httpd-moonbit/0.1\r\n</body>\r\n</html>\r\n"
+  let html = "<html>\r\n<head><title>" +
+    status.to_string() +
+    " " +
+    reason +
+    "</title></head>\r\n<body>\r\n<h1>" +
+    status.to_string() +
+    " " +
+    reason +
+    "</h1>\r\n<p>" +
+    escape_html(message) +
+    "</p>\r\n<hr>tiny-httpd-moonbit/0.1\r\n</body>\r\n</html>\r\n"
   Response::create(status, "text/html", @utf8.encode(html))
 }
 

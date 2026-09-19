@@ -24,7 +24,10 @@ test "parse post with body" {
 ///|
 test "parse rejects malformed request line" {
   inspect(parse_request("nonsense") is None, content="true")
-  inspect(parse_request("GET no-slash HTTP/1.0\r\n\r\n") is None, content="true")
+  inspect(
+    parse_request("GET no-slash HTTP/1.0\r\n\r\n") is None,
+    content="true",
+  )
   inspect(parse_request("TELEPORT / HTTP/1.0\r\n\r\n") is None, content="true")
   inspect(parse_request("") is None, content="true")
 }

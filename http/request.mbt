@@ -52,7 +52,7 @@ pub fn Request::param(self : Request, name : String) -> String? {
 /// Replace the body of a parsed request (used by streaming readers that
 /// read the body after the headers).
 pub fn Request::with_body(self : Request, body : Bytes) -> Request {
-  { ..self, body }
+  { ..self, body, }
 }
 
 ///|

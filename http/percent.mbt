@@ -19,7 +19,7 @@ fn hex_val(b : Byte) -> Int? {
 /// Decode percent-escapes in `input`. When `plus_as_space` is true (HTML
 /// form data), '+' decodes to a space. Malformed escapes are kept
 /// literally, matching the forgiving behaviour of the original tinyhttpd.
-pub fn percent_decode(input : String, plus_as_space~ : Bool = false) -> String {
+pub fn percent_decode(input : String, plus_as_space? : Bool = false) -> String {
   let bytes = @utf8.encode(input)
   let n = bytes.length()
   let out = Buffer()
@@ -32,7 +32,7 @@ pub fn percent_decode(input : String, plus_as_space~ : Bool = false) -> String {
     } else if b == b'%' && i + 2 < n {
       match (hex_val(bytes[i + 1]), hex_val(bytes[i + 2])) {
         (Some(hi), Some(lo)) => {
-          out.write_byte(((hi * 16) + lo).to_byte())
+          out.write_byte((hi * 16 + lo).to_byte())
           i += 3
         }
         _ => {

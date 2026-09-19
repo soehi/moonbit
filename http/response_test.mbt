@@ -11,8 +11,14 @@ test "response wire format is deterministic" {
 test "error page" {
   let r = Response::error(404, "Not Found")
   inspect(r.status, content="404")
-  inspect(@utf8.decode_lossy(r.body.view()).contains("<h1>404 Not Found</h1>"), content="true")
-  inspect(@utf8.decode_lossy(r.body.view()).contains("<script>"), content="false")
+  inspect(
+    @utf8.decode_lossy(r.body.view()).contains("<h1>404 Not Found</h1>"),
+    content="true",
+  )
+  inspect(
+    @utf8.decode_lossy(r.body.view()).contains("<script>"),
+    content="false",
+  )
 }
 
 ///|
@@ -24,6 +30,9 @@ test "head response keeps content-length" {
 
 ///|
 test "escape html" {
-  inspect(escape_html("<b>&\"'</b>"), content="&lt;b&gt;&amp;&quot;&#39;&lt;/b&gt;")
+  inspect(
+    escape_html("<b>&\"'</b>"),
+    content="&lt;b&gt;&amp;&quot;&#39;&lt;/b&gt;",
+  )
   inspect(escape_html("clean"), content="clean")
 }

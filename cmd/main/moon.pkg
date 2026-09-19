@@ -1,5 +1,9 @@
-// import {
-//   "tinyhttpd-moonbit/tinyhttpd" @lib,
-// }
+// Command line entry point for tiny-httpd.
+import {
+  "tinyhttpd-moonbit/tinyhttpd",
+  "tinyhttpd-moonbit/tinyhttpd/server",
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+}
 
 pkgtype(kind: "executable")
