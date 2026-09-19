@@ -1,0 +1,6 @@
+// HTTP message model for tiny-httpd: request parsing, response building,
+// percent/query decoding and MIME mapping. Pure MoonBit, target-agnostic.
+import {
+  "moonbitlang/core/encoding/utf8" @utf8,
+  "moonbitlang/core/sorted_map",
+}
