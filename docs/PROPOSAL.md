@@ -63,6 +63,6 @@ FFI、跨后端编译、包管理、测试工具链上的真实水位当众量�
 
 ## 8. GitHub 仓库链接
 
-https://github.com/&lt;你的用户名&gt;/tinyhttpd-moonbit
-（主分支 main，含 15 个有效提交：按功能拆分的 http/server/CI/文档系列提交，
+https://github.com/soehi/tinyhttpd-moonbit
+（主分支 main，16 个有效提交：按功能拆分的 http/server/CI/文档系列提交，
 另含测试与真机验证修复记录。）
