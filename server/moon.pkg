@@ -1,0 +1,23 @@
+// tiny-httpd server core: connection handling, embedded document root,
+// CGI subsystem and the TCP front-end. The native backend links a small
+// C shim; wasm/js builds compile a fallback so all request-processing
+// logic stays testable everywhere.
+import {
+  "tinyhttpd-moonbit/tinyhttpd/http",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/string",
+}
+
+import {
+  "tinyhttpd-moonbit/tinyhttpd/http",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/ref",
+} for "test"
+
+options(
+  targets: {
+    "ffi_tcp_native.mbt": [ "native", "llvm" ],
+    "ffi_tcp_stub.mbt": [ "wasm", "wasm-gc", "js" ],
+  },
+  link: { "native": { "native-stub": [ "ffi_tcp_native.c" ] } },
+)
