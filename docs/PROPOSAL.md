@@ -1,68 +1,43 @@
-# 2026 MoonBit 国产基础软件开源大赛-9月黑客松 项目申报
+# tinyhttpd-moonbit 项目申报书
 
-## 1. 项目名称
+## 基本信息
 
-tiny-httpd-moonbit —— 经典极简 HTTP 服务器 tinyhttpd 的 MoonBit 复刻版
+- 参赛者：soehi
+- 联系方式：811446351@qq.com
+- 仓库：https://github.com/soehi/tinyhttpd-moonbit
+- 方向：基础软件 / 网络服务
+- 许可证：GPL-2.0-or-later
+- 类型：移植项目
 
-## 2. 项目简介
+## 项目目标
 
-tinyhttpd 是 1999 年用 C 写成的约 500 行 HTTP 服务器，二十多年来被当作理解
-Web 服务器原理的第一份教材。本项目用纯 MoonBit 将它整体复刻：HTTP/1.0 报文
-解析、静态文件服务、CGI 动态执行、错误页这些骨架原样保留，工程上则按现代标准
-重做——请求与响应是纯函数的强类型模型，动态端点由 trait 在进程内执行而不再
-fork 子进程，页面内嵌进二进制（VFS）从而单文件可跑、路径穿越天然不可能。
-全项目约 600 行 MoonBit 源码、35 个自动化测试，native 构建出的单个可执行文件
-已在 Windows 真机上通过 curl 对全部端点的实测，wasm-gc 与 js 后端编译并通过
-同一套测试。
+tinyhttpd-moonbit 是一个用 MoonBit 重写的极简 HTTP 服务器。原型是 J. David Blackstone 在 1999 年写的 tinyhttpd，约 500 行 C，常被用来学习 Web 服务器的原理。本项目保留原版的骨架：HTTP/1.0 请求解析、静态文件、CGI、错误页，全部改用 MoonBit 实现，页面内嵌在二进制里，CGI 在进程内执行，native 编译出单个可执行文件，wasm 也能跑同一套逻辑。
 
-## 3. 项目方向与通用性说明
+## 真实需求
 
-方向：国产编程语言生态的基础软件。Web 服务器是通用性最强的基础软件形态之一，
-tinyhttpd 又是其中公认的教学母本——用一门新语言复刻它，等于把语言在类型系统、
-FFI、跨后端编译、包管理、测试工具链上的真实水位当众量一遍，也给后来的 MoonBit
-学习者留一份可以直接读懂、可以直接跑的服务器参考实现。`http` 包（报文解析与
-序列化）和 `server` 包（`Connection`/`CgiProgram` trait）是独立可复用的库，
-不与命令行入口绑定。
+想理解 HTTP 服务器的人，最缺一份读得懂、跑得起、能动手改的完整实现。原版 tinyhttpd 只能在类 Unix 上编译，CGI 靠 fork 子进程，也没有测试。MoonBit 生态目前缺这样的入门级服务器示例。用新语言复刻经典程序，既能实际检验 MoonBit 在 FFI、测试和跨后端编译上的能力，做完的东西也能留下来给后面学习的人用。
 
-## 4. 预期使用场景
+## 使用场景
 
-1. **教学与源码阅读**。MoonBit 初学者按 README 的架构图从 `http` 包读到
-   `cmd`，配合 35 个测试理解"字节流如何变成 HTTP 响应"；也可作为高校
-   计算机网络课的实验底座，让学生在 `CgiProgram` 上加自己的动态端点。
-2. **单二进制的内网小服务**。页面内嵌 VFS、无需任何运行时依赖，`moon build
-   --target native --release` 产出一个可执行文件即可在设备或内网机上起一个
-   带动态端点的管理页/状态页（演示站点 `/`、`/cgi-bin/env.cgi`、
-   `/cgi-bin/color.cgi` 即为此设计）。
-3. **WASM 沙箱环境的服务器逻辑验证**。wasm-gc/js 后端没有 socket，但请求
-   管线完全一致：把 HTTP 解析、路由、CGI 逻辑带进浏览器扩展、边缘函数等
-   无法开端口的场景里，用内存连接测试完整的字节级行为。
-4. **MoonBit Web 框架的种子组件**。`Request`/`Response` 模型与 trait 化的
-   连接抽象可以直接被更大规模的框架项目吸收，作为最内核的那一层。
+1. 学习 MoonBit 和 HTTP 协议：配合仓库里的 35 个测试，从 percent 解码读到响应序列化，理解字节流怎么变成 HTTP 响应。
+2. 内网小服务：静态页面内嵌、无外部依赖，编译出一个文件拷到内网机器就能起状态页或管理页，带自己的动态端点。
+3. 无 socket 环境的逻辑验证：wasm/js 后端用内存连接跑同一套请求处理，可用在浏览器扩展等开不了端口的场景。
 
-## 5. 拟实现的核心功能
+## 参考项目
 
-- HTTP/1.0 请求解析：请求行、头、Content-Length 请求体、查询串 percent 解码（已完成）
-- 响应模型与字节级序列化，头按字典序确定性输出；HEAD/404/501/400 语义（已完成）
-- 内嵌 VFS 静态服务：路径规范化、MIME 推断、防目录穿越（已完成）
-- 进程内 CGI：CGI 1.1 meta-variables 构造、SSI 风格模板引擎（env.cgi）、
-  可编程动态端点 `CgiProgram`（color.cgi），参数消毒防注入（已完成）
-- 跨后端 TCP 前端：`Connection` trait + 约 100 行 C shim（Windows 动态解析
-  winsock，无需额外链接参数），wasm/js 内存桩（已完成）
-- 计划中：连接级并发、`/server-info` 内省端点、mooncake 包发布
+- 项目：tinyhttpd（J. David Blackstone，1999）
+- 来源：https://sourceforge.net/projects/tinyhttpd/
+- 许可证：GNU GPL。本项目因此以 GPL-2.0-or-later 发布，未复制原 C 代码，出处说明在仓库 NOTICE 文件中。
 
-## 6. 项目性质
+## 拟实现功能
 
-移植项目（在原版设计基础上的完整重写，未复制原 C 代码）。
+1. HTTP/1.0 请求行、请求头、查询串和 Content-Length 请求体解析。
+2. 静态文件服务：内嵌 VFS、MIME 推断、路径规范化防穿越。
+3. CGI：构造 CGI 1.1 环境变量，进程内执行动态端点，SSI 风格模板渲染 env.cgi。
+4. 响应序列化：字典序确定性的响应头，HEAD、404、501、400 语义，HTML 转义。
+5. 跨后端支持：native 用约 100 行 C 绑定 socket，wasm-gc/js 用内存连接，测试共用。
+6. 输入消毒：动态端点参数白名单过滤，错误页转义，避免注入。
 
-## 7. 参考项目说明
+## 预期成果与生态价值
 
-- 参考项目：tinyhttpd（J. David Blackstone，1999）
-- 来源链接：https://sourceforge.net/projects/tinyhttpd/
-- 许可证：GNU General Public License。本项目据此以 GPL-2.0-or-later 发布，
-  仓库 NOTICE 文件中保留了完整的出处与署名说明。
-
-## 8. GitHub 仓库链接
-
-https://github.com/soehi/tinyhttpd-moonbit
-（主分支 main，16 个有效提交：按功能拆分的 http/server/CI/文档系列提交，
-另含测试与真机验证修复记录。）
+交付可运行的 tiny-httpd 命令、http 和 server 两个可复用的 MoonBit 包、35 个自动化测试和使用文档。目前命令已在 Windows 真机上运行并通过 curl 实测。服务器逻辑不依赖文件系统，HTTP 解析和路由骨架可以直接被其他 MoonBit 项目复用，使用者不需要采用 MoonBit 工程。
